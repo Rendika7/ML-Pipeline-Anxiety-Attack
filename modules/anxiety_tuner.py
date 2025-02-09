@@ -1,39 +1,39 @@
+"""
+anxiety_tuner.py
+
+Modul ini digunakan untuk melakukan tuning hyperparameter model menggunakan Keras Tuner.
+"""
+
 # Import library
 import tensorflow as tf
 import keras_tuner as kt
 import tensorflow_transform as tft
-import keras_tuner as kt
 from tfx.v1.components import TunerFnResult
 from tfx.components.trainer.fn_args_utils import FnArgs
 from anxiety_trainer import NUMERICAL_FEATURES, CATEGORICAL_FEATURES, transformed_name, input_fn
 
-
-# Model builder for hyperparameter tuning
 def model_builder(hyperparameters):
     """
-    This function defines a Keras model and returns the model as a
-    Keras object.
+    Membuat model Keras dengan hyperparameter yang akan dituning.
+
+    Args:
+        hyperparameters (kt.HyperParameters): Hyperparameters yang akan digunakan untuk tuning.
+
+    Returns:
+        tf.keras.Model: Model Keras yang dikompilasi.
     """
 
-    input_features = []
-
-    for key in NUMERICAL_FEATURES:
-        input_features.append(
-            tf.keras.Input(shape=(1,), name=transformed_name(key))
-        )
-        
-    for key in CATEGORICAL_FEATURES:
-        input_features.append(
-            tf.keras.Input(shape=(1,), name=transformed_name(key))
-        )
-
+    input_features = [
+        tf.keras.Input(shape=(1,), name=transformed_name(key))
+        for key in NUMERICAL_FEATURES + CATEGORICAL_FEATURES
+    ]
 
     concatenate = tf.keras.layers.concatenate(input_features)
 
     # Hyperparameter yang lebih luas untuk optimasi lebih baik
     unit_1 = hyperparameters.Int('unit_1', min_value=128, max_value=512, step=64)
     dropout_1 = hyperparameters.Float('dropout_1', min_value=0.1, max_value=0.5, step=0.1)
-    
+
     unit_2 = hyperparameters.Int('unit_2', min_value=64, max_value=256, step=32)
     dropout_2 = hyperparameters.Float('dropout_2', min_value=0.1, max_value=0.5, step=0.1)
 
@@ -59,16 +59,21 @@ def model_builder(hyperparameters):
     # Kompilasi model dengan optimizer yang dituning
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
-        loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
         metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
     )
 
     return model
-    
-# Fungsi tuner untuk tuning hyperparameter
+
 def tuner_fn(fn_args: FnArgs):
     """
     Melakukan tuning hyperparameter menggunakan Keras Tuner.
+
+    Args:
+        fn_args (FnArgs): Argumen fungsi dari TFX yang berisi informasi data & model.
+
+    Returns:
+        TunerFnResult: Objek hasil tuning dari TFX.
     """
 
     tf_transform_output = tft.TFTransformOutput(fn_args.transform_graph_path)

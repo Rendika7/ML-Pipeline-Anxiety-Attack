@@ -1,10 +1,13 @@
+"""
+anxiety_trainer.py
+
+Modul ini berisi fungsi pelatihan model Machine Learning untuk klasifikasi tingkat kecemasan.
+"""
+
 # Import library
 import os
 import tensorflow as tf
-from keras.utils.vis_utils import plot_model
 import tensorflow_transform as tft
-from tfx.v1.components import TunerFnResult
-from tfx.components.trainer.fn_args_utils import FnArgs
 from anxiety_transform import (
     LABEL_KEY,
     NUMERICAL_FEATURES,
@@ -12,19 +15,22 @@ from anxiety_transform import (
     transformed_name,
 )
 
-# Fungsi untuk membuat model dengan hyperparameter terbaik dari tuner
 def get_model(hyperparameters, show_summary=True):
     """
     Membuat model dengan hyperparameter terbaik dari tuner.
+
+    Args:
+        hyperparameters (dict): Dictionary berisi nilai hyperparameter.
+        show_summary (bool): Menampilkan summary model jika True.
+
+    Returns:
+        tf.keras.Model: Model Keras yang telah dikompilasi.
     """
 
-    input_features = []
-
-    for feature in NUMERICAL_FEATURES:
-        input_features.append(tf.keras.Input(shape=(1,), name=transformed_name(feature)))
-        
-    for feature in CATEGORICAL_FEATURES:
-        input_features.append(tf.keras.Input(shape=(1,), name=transformed_name(feature)))
+    input_features = [
+        tf.keras.Input(shape=(1,), name=transformed_name(feature))
+        for feature in NUMERICAL_FEATURES + CATEGORICAL_FEATURES
+    ]
 
     concatenate = tf.keras.layers.concatenate(input_features)
 
@@ -65,12 +71,10 @@ def get_model(hyperparameters, show_summary=True):
 
     return model
 
-# Fungsi untuk membaca data yang sudah di kompres
 def gzip_reader_fn(filenames):
     """Loads compressed data"""
     return tf.data.TFRecordDataset(filenames, compression_type='GZIP')
 
-# Fungsi untuk mendapatkan fitur yang sudah di transform
 def get_serve_tf_examples_fn(model, tf_transform_output):
     """Returns a function that parses a serialized tf.Example."""
 
@@ -81,9 +85,7 @@ def get_serve_tf_examples_fn(model, tf_transform_output):
         """Returns the output to be used in the serving signature."""
         feature_spec = tf_transform_output.raw_feature_spec()
         feature_spec.pop(LABEL_KEY)
-        parsed_features = tf.io.parse_example(
-            serialized_tf_examples, feature_spec
-        )
+        parsed_features = tf.io.parse_example(serialized_tf_examples, feature_spec)
 
         transformed_features = model.tft_layer(parsed_features)
 
@@ -92,12 +94,19 @@ def get_serve_tf_examples_fn(model, tf_transform_output):
 
     return serve_tf_examples_fn
 
-# Fungsi untuk membuat dataset
 def input_fn(file_pattern, tf_transform_output, batch_size=64):
-    """Generates features and labels for tuning/training."""
-    transformed_feature_spec = (
-        tf_transform_output.transformed_feature_spec().copy()
-    )
+    """
+    Generates features and labels for tuning/training.
+
+    Args:
+        file_pattern (str): Pola file untuk dataset.
+        tf_transform_output: Output dari transformasi fitur.
+        batch_size (int): Ukuran batch.
+
+    Returns:
+        tf.data.Dataset: Dataset dalam format TensorFlow.
+    """
+    transformed_feature_spec = tf_transform_output.transformed_feature_spec().copy()
 
     dataset = tf.data.experimental.make_batched_features_dataset(
         file_pattern=file_pattern,
@@ -112,6 +121,9 @@ def input_fn(file_pattern, tf_transform_output, batch_size=64):
 def run_fn(fn_args):
     """
     Fungsi utama untuk melatih model berdasarkan hasil tuning dari tuner.
+
+    Args:
+        fn_args: Argumen dari TFX yang berisi informasi data & model.
     """
 
     # Load hasil transformasi fitur
@@ -128,9 +140,9 @@ def run_fn(fn_args):
     model = get_model(hyperparameters)
 
     log_dir = os.path.join(os.path.dirname(fn_args.serving_model_dir), "logs")
-    
+
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, update_freq="batch")
-    
+
     # Tambahkan callback untuk optimalisasi training
     early_stopping = tf.keras.callbacks.EarlyStopping(
         monitor='val_loss', patience=8, restore_best_weights=True
@@ -139,7 +151,7 @@ def run_fn(fn_args):
     reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
         monitor='val_loss', factor=0.5, patience=3, min_lr=0.00001
     )
-    
+
     # Latih model
     model.fit(
         train_dataset,

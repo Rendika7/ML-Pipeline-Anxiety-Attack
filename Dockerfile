@@ -1,6 +1,6 @@
 FROM tensorflow/serving:latest
 
-COPY ./output/serving_model /models/cc-model
+COPY RENDIKA_NURHARTANTO_SUHARTO-pipeline/anxiety-pipeline/Trainer/model/109/Format-Serving /models/anxiety-model
 ENV MODEL_NAME=anxiety-model
 ENV PORT=8501
 
