@@ -1,0 +1,47 @@
+{
+  "evalConfig": {
+    "modelSpecs": [
+      {
+        "labelKey": "Anxiety Category Encoded"
+      }
+    ],
+    "slicingSpecs": [
+      {}
+    ],
+    "metricsSpecs": [
+      {
+        "metrics": [
+          {
+            "className": "AUC"
+          },
+          {
+            "className": "Precision"
+          },
+          {
+            "className": "Recall"
+          },
+          {
+            "className": "ExampleCount"
+          },
+          {
+            "className": "CategoricalAccuracy",
+            "threshold": {
+              "valueThreshold": {
+                "lowerBound": 0.9
+              }
+            }
+          }
+        ],
+        "modelNames": [
+          ""
+        ]
+      }
+    ]
+  },
+  "version": "0.39.0",
+  "dataLocation": "<user provided PCollection>",
+  "fileFormat": "<unknown>",
+  "modelLocations": {
+    "": "RENDIKA_NURHARTANTO_SUHARTO-pipeline\\anxiety-pipeline\\Trainer\\model\\38\\Format-Serving"
+  }
+}

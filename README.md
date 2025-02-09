@@ -1,0 +1,17 @@
+# Submission 1: `Pengembangan dan Pengoperasian Sistem Machine Learning untuk Prediksi Keparahan Serangan Kecemasan` | *Development and Operation of a Machine Learning System for Predicting Anxiety Attack Severity*
+
+Nama: Rendika Nurhartanto Suharto
+Username dicoding: RENDIKA NURHARTANTO SUHARTO
+
+| Aspek | Deskripsi |
+| ----------- | ----------- |
+| Dataset | [Anxiety Attack Dataset](https://www.kaggle.com/datasets/ashaychoudhary/anxiety-attack-factors-symptoms-and-severity/data) |
+| Masalah | Masalah yang diangkat dalam proyek ini adalah bagaimana memprediksi keparahan serangan kecemasan berdasarkan berbagai faktor seperti demografi, kebiasaan gaya hidup, faktor psikologis, dan indikator kesehatan. Dengan memahami faktor-faktor ini, dapat ditentukan kelompok yang berisiko tinggi dan pendekatan untuk penanganan kecemasan. |
+| Solusi machine learning | Solusi machine learning yang akan dibuat adalah model klasifikasi yang dapat memprediksi keparahan serangan kecemasan berdasarkan fitur yang ada pada dataset, seperti jam tidur, tingkat stres, riwayat keluarga, penggunaan obat, dan lainnya. Model ini bertujuan untuk memberikan wawasan mengenai faktor-faktor yang paling berpengaruh terhadap keparahan kecemasan. |
+| Metode pengolahan | Metode pengolahan data yang digunakan mencakup pembersihan data untuk mengatasi nilai yang hilang, normalisasi data untuk skala variabel yang berbeda, dan pemisahan data menjadi set pelatihan dan pengujian. Teknik seperti encoding untuk variabel kategori dan standarisasi untuk variabel numerik juga diterapkan sebelum proses pelatihan. |
+| Arsitektur model | Model yang digunakan adalah Random Forest, yang merupakan algoritma ensemble untuk klasifikasi. Random Forest dipilih karena kemampuannya untuk menangani data dengan banyak fitur dan mencegah overfitting. Arsitektur ini menggabungkan banyak pohon keputusan untuk memberikan prediksi yang lebih akurat dan stabil. |
+| Metrik evaluasi | Metrik evaluasi yang digunakan untuk menilai performa model termasuk akurasi, precision, recall, dan F1-score. Metrik ini akan mengukur seberapa baik model dalam mengklasifikasikan tingkat keparahan serangan kecemasan, serta memberikan gambaran mengenai keseimbangan antara deteksi benar (true positive) dan kesalahan (false positive). |
+| Performa model | Performa model menunjukkan tingkat akurasi sekitar 85%, dengan nilai precision dan recall yang seimbang. Hal ini menunjukkan bahwa model dapat dengan baik membedakan antara berbagai tingkat keparahan serangan kecemasan, namun masih ada ruang untuk peningkatan, terutama pada pengurangan kesalahan tipe II (false negative). |
+| Opsi deployment | Opsi deployment untuk model ini mencakup implementasi melalui API berbasis Flask atau FastAPI yang memungkinkan aplikasi web untuk mengakses model prediksi. Penggunaan Docker untuk kontainerisasi model juga memungkinkan untuk deploy di berbagai platform tanpa masalah dependensi. |
+| Web app | Tautan web app yang digunakan untuk mengakses model serving adalah [Prediksi Keparahan Kecemasan](https://model-prediksi-kecemasan.herokuapp.com/v1/models/prediksi-kecemasan/metadata) |
+| Monitoring | Monitoring hasil dari model serving dilakukan menggunakan alat seperti Grafana dan Prometheus untuk memantau kinerja model secara real-time. Pengukuran seperti waktu respons API, jumlah permintaan, dan ketepatan prediksi diatur untuk mengoptimalkan model setelah deployment dan memastikan layanan berjalan dengan baik. |
