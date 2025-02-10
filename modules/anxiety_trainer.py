@@ -10,8 +10,7 @@ import tensorflow as tf
 import tensorflow_transform as tft
 from anxiety_transform import (
     LABEL_KEY,
-    NUMERICAL_FEATURES,
-    CATEGORICAL_FEATURES,
+    FEATURES,
     transformed_name,
 )
 
@@ -29,7 +28,7 @@ def get_model(hyperparameters, show_summary=True):
 
     input_features = [
         tf.keras.Input(shape=(1,), name=transformed_name(feature))
-        for feature in NUMERICAL_FEATURES + CATEGORICAL_FEATURES
+        for feature in FEATURES
     ]
 
     concatenate = tf.keras.layers.concatenate(input_features)
@@ -159,7 +158,7 @@ def run_fn(fn_args):
         validation_data=eval_dataset,
         validation_steps=fn_args.eval_steps,
         callbacks=[tensorboard_callback, early_stopping, reduce_lr],
-        epochs=10
+        epochs=100
     )
 
     # Simpan model untuk serving

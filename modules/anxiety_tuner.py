@@ -10,7 +10,7 @@ import keras_tuner as kt
 import tensorflow_transform as tft
 from tfx.v1.components import TunerFnResult
 from tfx.components.trainer.fn_args_utils import FnArgs
-from anxiety_trainer import NUMERICAL_FEATURES, CATEGORICAL_FEATURES, transformed_name, input_fn
+from anxiety_trainer import FEATURES, transformed_name, input_fn
 
 def model_builder(hyperparameters):
     """
@@ -25,7 +25,7 @@ def model_builder(hyperparameters):
 
     input_features = [
         tf.keras.Input(shape=(1,), name=transformed_name(key))
-        for key in NUMERICAL_FEATURES + CATEGORICAL_FEATURES
+        for key in FEATURES
     ]
 
     concatenate = tf.keras.layers.concatenate(input_features)

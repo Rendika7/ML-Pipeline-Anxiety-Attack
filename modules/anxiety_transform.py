@@ -8,8 +8,8 @@ menggunakan TensorFlow Transform (TFT).
 import tensorflow as tf
 import tensorflow_transform as tft
 
-# Daftar numerical fitur pada dataset
-NUMERICAL_FEATURES = [
+# Daftar fitur pada dataset yang perlu di-encode
+FEATURES = [
     "Age",
     "Sleep Hours",
     "Physical Activity (hrs/week)",
@@ -21,17 +21,13 @@ NUMERICAL_FEATURES = [
     "Sweating Level (1-5)",
     "Therapy Sessions (per month)",
     "Diet Quality (1-10)",
-]
-
-# Daftar categorical fitur pada dataset
-CATEGORICAL_FEATURES = [
     "Gender",
     "Occupation",
     "Smoking",
     "Family History of Anxiety",
     "Dizziness",
     "Medication",
-    "Recent Major Life Event",
+    "Recent Major Life Event"
 ]
 
 # Label key
@@ -61,27 +57,22 @@ def preprocessing_fn(inputs):
     """
     outputs = {}
 
-    # 1️⃣ Encoding fitur kategorikal menjadi integer (menggunakan vocabulary encoding)
-    encoded_categorical_features = {
-        feature: tft.compute_and_apply_vocabulary(
-            tf.strings.strip(tf.strings.lower(inputs[feature]))
-        )
-        for feature in CATEGORICAL_FEATURES
-        if feature in inputs
-    }
-
-    # 2️⃣ Gabungkan semua fitur numerik dan fitur kategorikal yang telah dienkode
-    all_numeric_features = {**encoded_categorical_features}
-    for feature in NUMERICAL_FEATURES:
+    # 1️⃣ Encoding semua fitur menjadi kategorikal (menggunakan vocabulary encoding)
+    for feature in FEATURES:
         if feature in inputs:
-            all_numeric_features[feature] = tf.cast(inputs[feature], tf.float32)
+            # Cek apakah fitur berupa string dan lakukan encoding
+            if isinstance(inputs[feature], tf.Tensor) and inputs[feature].dtype == tf.string:
+                encoded_feature = tft.compute_and_apply_vocabulary(
+                    tf.strings.strip(tf.strings.lower(inputs[feature]))
+                )
+                outputs[transformed_name(feature)] = encoded_feature
+            else:
+                # Jika bukan string, biarkan saja tanpa transformasi
+                outputs[transformed_name(feature)] = inputs[feature]
 
-    # 3️⃣ Normalisasi semua fitur numerik agar berada dalam rentang [0,1]
-    for feature, tensor in all_numeric_features.items():
-        outputs[transformed_name(feature)] = tft.scale_to_0_1(tensor)
-
-    # 4️⃣ Transformasi label target menjadi integer
+    # 2️⃣ Transformasi label target menjadi integer (label tetap diproses seperti semula)
     if LABEL_KEY in inputs:
-        outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.int64)
+        transformed_label = tf.cast(inputs[LABEL_KEY], tf.int64)
+        outputs[transformed_name(LABEL_KEY)] = transformed_label
 
     return outputs
