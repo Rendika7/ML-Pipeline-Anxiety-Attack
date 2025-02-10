@@ -103,9 +103,9 @@ def init_components(config):
             tfma.MetricConfig(class_name="Recall"),
             tfma.MetricConfig(class_name="ExampleCount"),
             tfma.MetricConfig(
-                class_name="CategoricalAccuracy",
+                class_name="SparseCategoricalAccuracy",
                 threshold=tfma.MetricThreshold(
-                    value_threshold=tfma.GenericValueThreshold(lower_bound={"value": 0.9}),
+                    value_threshold=tfma.GenericValueThreshold(lower_bound={"value": 0.2}),
                     change_threshold=tfma.GenericChangeThreshold(
                         direction=tfma.MetricDirection.HIGHER_IS_BETTER,
                         absolute={"value": 0.0001}

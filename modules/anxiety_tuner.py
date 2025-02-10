@@ -31,13 +31,13 @@ def model_builder(hyperparameters):
     concatenate = tf.keras.layers.concatenate(input_features)
 
     # Hyperparameter yang lebih luas untuk optimasi lebih baik
-    unit_1 = hyperparameters.Int('unit_1', min_value=128, max_value=512, step=64)
+    unit_1 = hyperparameters.Int('unit_1', min_value=256, max_value=512, step=64)
     dropout_1 = hyperparameters.Float('dropout_1', min_value=0.1, max_value=0.5, step=0.1)
 
-    unit_2 = hyperparameters.Int('unit_2', min_value=64, max_value=256, step=32)
+    unit_2 = hyperparameters.Int('unit_2', min_value=128, max_value=256, step=32)
     dropout_2 = hyperparameters.Float('dropout_2', min_value=0.1, max_value=0.5, step=0.1)
 
-    unit_3 = hyperparameters.Int('unit_3', min_value=32, max_value=128, step=32)
+    unit_3 = hyperparameters.Int('unit_3', min_value=64, max_value=128, step=32)
     dropout_3 = hyperparameters.Float('dropout_3', min_value=0.1, max_value=0.5, step=0.1)
 
     learning_rate = hyperparameters.Choice('learning_rate', [0.0001, 0.0005, 0.001, 0.005])
@@ -79,14 +79,14 @@ def tuner_fn(fn_args: FnArgs):
     tf_transform_output = tft.TFTransformOutput(fn_args.transform_graph_path)
 
     # Ambil dataset pelatihan dan evaluasi
-    train_dataset = input_fn(fn_args.train_files, tf_transform_output, batch_size=32)
-    eval_dataset = input_fn(fn_args.eval_files, tf_transform_output, batch_size=32)
+    train_dataset = input_fn(fn_args.train_files, tf_transform_output, batch_size=64)
+    eval_dataset = input_fn(fn_args.eval_files, tf_transform_output, batch_size=64)
 
     # Inisialisasi RandomSearch tuner
     tuner = kt.RandomSearch(
         model_builder,
         objective='val_sparse_categorical_accuracy',  # Optimasi berdasarkan akurasi validasi
-        max_trials=10,
+        max_trials=5,
         executions_per_trial=2,
         directory=fn_args.working_dir,
         project_name='anxiety_severity_tuner'
@@ -99,6 +99,6 @@ def tuner_fn(fn_args: FnArgs):
             "validation_data": eval_dataset,
             "steps_per_epoch": fn_args.train_steps,
             "validation_steps": fn_args.eval_steps,
-            "epochs": 8
+            "epochs": 5
         }
     )
