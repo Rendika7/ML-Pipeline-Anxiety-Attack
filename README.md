@@ -102,7 +102,3 @@ Now you can proceed with the steps below for setting up and running the project.
 ## Making Predictions
 - Open the `test.ipynb` file.
 - Run the last file in the notebook.
-
----
-
-Hope this helps! Let me know if you need any further clarification.
