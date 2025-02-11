@@ -9,26 +9,14 @@ import tensorflow as tf
 import tensorflow_transform as tft
 
 # Daftar fitur pada dataset yang perlu di-encode
-FEATURES = [
-    "Age",
-    "Sleep Hours",
-    "Physical Activity (hrs/week)",
-    "Caffeine Intake (mg/day)",
-    "Alcohol Consumption (drinks/week)",
-    "Stress Level (1-10)",
-    "Heart Rate (bpm during attack)",
-    "Breathing Rate (breaths/min)",
-    "Sweating Level (1-5)",
-    "Therapy Sessions (per month)",
-    "Diet Quality (1-10)",
-    "Gender",
-    "Occupation",
-    "Smoking",
-    "Family History of Anxiety",
-    "Dizziness",
-    "Medication",
-    "Recent Major Life Event"
-]
+FEATURES = ['Age', 'Gender', 'Occupation', 'Sleep Hours',
+            'Physical Activity (hrs/week)', 'Caffeine Intake (mg/day)',
+            'Alcohol Consumption (drinks/week)', 'Smoking',
+            'Family History of Anxiety', 'Stress Level (1-10)',
+            'Heart Rate (bpm during attack)', 'Breathing Rate (breaths/min)',
+            'Sweating Level (1-5)', 'Dizziness', 'Medication',
+            'Therapy Sessions (per month)', 'Recent Major Life Event',
+            'Diet Quality (1-10)']
 
 # Label key
 LABEL_KEY = "Anxiety Category Encoded"

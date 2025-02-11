@@ -25,20 +25,6 @@ feature {
   }
 }
 feature {
-  name: "Anxiety Category"
-  type: BYTES
-  domain: "Anxiety Category"
-  presence {
-    min_fraction: 1.0
-    min_count: 1
-  }
-  shape {
-    dim {
-      size: 1
-    }
-  }
-}
-feature {
   name: "Anxiety Category Encoded"
   type: INT
   presence {
@@ -265,13 +251,6 @@ feature {
       size: 1
     }
   }
-}
-string_domain {
-  name: "Anxiety Category"
-  value: "Mild Anxiety"
-  value: "Moderate Anxiety"
-  value: "Panic Level Anxiety"
-  value: "Severe Anxiety"
 }
 string_domain {
   name: "Dizziness"
